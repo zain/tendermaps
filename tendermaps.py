@@ -1,12 +1,15 @@
 from PIL import Image, ImageFilter
-import os, time
+import json, os
+
 
 GREY_RANGE = 20
 ACCEPTABLE_FILETYPES = sorted(['png', 'jpg', 'jpeg', 'tif', 'gif'])
+IN_FOLDER = os.path.abspath('scans/')
+OUT_FOLDER = os.path.abspath('out/')
+LISTFILE = os.path.join(OUT_FOLDER, 'list.json')
+
 
 def load_scan(path):
-    print "New file: %s" % path
-    
     im = Image.open(path).convert("RGBA")
     pix = im.load()
     
@@ -38,46 +41,57 @@ def load_scan(path):
         pix[x,y] = color
     
     im = im.filter(ImageFilter.EDGE_ENHANCE)
-    im.save("im.png", "PNG")
+    
+    filename = os.path.basename(path)
+    out_path = os.path.join(OUT_FOLDER, "%s.png" % filename.split('.')[0])
+    im.save(out_path, "PNG")
 
 
-def watch_folder(path, callback, load_on_init=False):
-    abs_path = os.path.abspath(path)
+def find_new_files(folder):
+    try:
+        with open(LISTFILE, 'r') as f:
+            last_maps = json.loads(f.read())
+    except IOError:
+        # file doesn't exist
+        last_maps = {}
+        with open(LISTFILE, 'w') as f:
+            f.write(json.dumps(last_maps))
     
-    conn = pymongo.Connection()
-    db = conn.tendermaps
+    maps = {}
+    for filename in os.listdir(folder):
+        if filename.split('.')[1] in ACCEPTABLE_FILETYPES:
+            maps[filename] = {
+                "bbox": ((0,0),(0,0)),
+                "description": get_description(folder, filename),
+                "last_modified": os.path.getmtime(os.path.join(folder, filename)),
+            }
     
-    print "Watching for new files of type %s in folder:\n%s\n" % (ACCEPTABLE_FILETYPES, abs_path)
+    maps = json.loads(json.dumps(maps))
+    new_files = [f for f, props in maps.items() if f not in last_maps or last_maps[f] != props]
     
-    while True:
-        file_list = []
-        for root, folders, files in os.walk(abs_path):
-            for filename in files:
-                if filename.split('.')[-1].lower() in ACCEPTABLE_FILETYPES:
-                    file_list.append(os.path.join(root, filename))
-        
-        
-        paths = db.paths
-        result = paths.find_one({"_id": abs_path})
-        
-        if result:
-            last_file_list = result["files"] 
-        elif load_on_init:
-            last_file_list = []
-        else:
-            last_file_list = file_list
-        
-        new_files = set(file_list) - set(last_file_list)
-        
-        for path in new_files:
-            callback(path)
-        
-        paths.remove({"_id": abs_path})
-        paths.insert({"_id": abs_path, "files": file_list})
-        
-        time.sleep(3)
+    if maps != last_maps:
+        with open(LISTFILE, 'w') as f:
+            f.write(json.dumps(maps))
+    
+    return new_files
+
+
+def get_description(folder, filename):
+        txt_filename = "%s.txt" % filename.split(".")[0]
+        path = os.path.join(folder, txt_filename)
+        try:
+            with open(path, 'r') as f:
+                return f.read()
+        except IOError:
+            with open(path, 'w') as f:
+                f.write("")
+            return ""
 
 
 if __name__ == '__main__':
-    load_scan('/Users/zain/projects/tendermaps/scans/scan.png')
-    #watch_folder("scans", load_scan, load_on_init=True)
+    new_files = find_new_files(IN_FOLDER)
+    
+    for filename in new_files:
+        print "Processing [%s]... " % filename,
+        load_scan(os.path.join(IN_FOLDER, filename))
+        print "Done."
