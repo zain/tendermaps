@@ -2,12 +2,12 @@ from PIL import Image, ImageFilter
 import json, os
 
 
-DEBUG = True
-IN_FOLDER = os.path.abspath('in/')
-OUT_FOLDER = os.path.abspath('out/')
-LISTFILE = os.path.join(OUT_FOLDER, 'list.json')
-GREY_SENSITIVITY = 20
-ACCEPTABLE_FILETYPES = sorted(['png', 'jpg', 'jpeg', 'tif', 'gif'])
+DEBUG = True # prints some extra stuff on each run
+IN_FOLDER = os.path.abspath('in/') # location of the scanned images and their descriptions
+OUT_FOLDER = os.path.abspath('out/') # location where the processed scans will go
+LISTFILE = os.path.join(OUT_FOLDER, 'list.json') # stores info from the last time this was run
+GREY_SENSITIVITY = 20 # how colorful can a pixel be for it to still be considered greyscale?
+ACCEPTABLE_FILETYPES = sorted(['png', 'jpg', 'jpeg', 'tif', 'gif']) # scan filetypes
 
 
 def get_stored_list(listfile_path):
