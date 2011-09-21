@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>TenderMaps</title>
+    <script type="text/javascript" src="http://github.com/simplegeo/polymaps/raw/v2.3.0/polymaps.min.js"></script>
+	<script type="text/javascript" src="http://github.com/simplegeo/polymaps/raw/v2.3.0/lib/crimespotting/crimespotting.js"></script>
+	<script type="text/javascript" src="http://github.com/protovis/protovis/raw/v3.3.1/examples/jquery-1.4.2.min.js"></script>
+	
+	<script type="text/javascript" src="static/lib/jquery-ui/js/jquery-ui-1.8.6.custom.min.js"></script>	
+	<script type="text/javascript" src="static/lib/jquery.qtip-1.0.0-rc3-dm.js"></script>
+	
+	<script type="text/javascript" src="static/js/page_handler.js"></script>
+	<script type="text/javascript" src="static/js/map.js"></script>
+	<script type="text/javascript" src="static/js/ui.js"></script>
+	
+	<style type="text/css">
+
+	@import url("http://github.com/simplegeo/polymaps/raw/v2.3.0/examples/example.css");
+	@import url("static/lib/jquery-ui/css/custom-theme/jquery-ui-1.8.6.custom.css");
+	@import url("static/css/main.css");
+
+    </style>
+  </head>
+  <body>	
+	
+	<div id="map"></div>
+	
+	<div id="aboutInfo" class="uiBackground" style="display:none;">
+		<div class="largeText">About TenderMaps</div>
+		<div class="mediumText"><div><span id="internal-source-marker_0.7012979907449335"><strong>Tendermaps is an experiment in informal, community-based cartography. We encourage people to define their neighborhood in their own terms by creating hand-drawn maps.</strong></span> <strong><br />
+		  </strong><br />
+		   <br />
+		  We began with the question: Where is the Tenderloin? We soon found there are as many definitions of what geographic regions constitute the Tenderloin as there are inhabitants.<br />
+		  <br />
+		  We wanted to move from the static and singular, toward more dynamic, subtle definitions of neighborhoods, definitions emphasizing the nuanced communities and personal experiences that really shape a neighborhood’s boundaries. We wondered how we could we harness the implicit mental maps people actually use. What would happen if we defined a neighborhood by the way we moved though it, or by the places we loved in it?<br />
+		  <br />
+		  How could we help people build their own maps in personal, meaningful ways?<br />
+		  <br />
+		  After a bit of brainstorming and quick coding, we hit the streets, encouraging people in the Tenderloin to define the neighborhood by marking up street maps. We guided people toward defining the region with three broad factors in mind: The paths they take, the things they love, and the location of their community. We asked every mapmaker to self-report as a Tenderloin resident, visitor, or worker.<br />
+		  <br />
+		  Accessibility to the process was a key design factor for our team, so we employed a low-tech map marking method – Sharpie marker and paper.  People wrote on a map print-out blank except for street names and major landmarks. The maps they drew of the Tenderloin as they experience it were then scanned, and the handmade mark-ups extracted, georectified, and superimposed. <br />
+		  <br />
+		  Users can then explore the maps by clicking on a region to display maps that have marked that area, or selecting a class of maps and map makers map to see other maps made by the same person.<br />
+		  <br />
+		  In the spirit of the Urban Hack, we focused on what we could get done, not what we could do. However, we see ongoing potential for the project in several directions. <br />
+		  <br />
+		  Future Directions:
+		  <ul>
+		    <li>Exploring community aesthetically: art maps, self-guided about local topics, by locals</li>
+		    <li>Harnessing the power of drawing, storytelling, and journalism to generate conversations about community.</li>
+		    <li>Getting the real local story – areas people say are dangerous and how they say it.</li>
+		    <li>More self-reporting, use of Facebook.</li>
+		    <li>Collecting images, video, or voices from the mapmaker. Linked to local reporting.</li>
+		  </ul>
+		  <br />
+		  <br />
+		  Tools employed: <br />
+		  Walking Papers<br />
+		  Polymaps<br />
+		  Java<br />
+		  Python<br />
+		  HTML<br />
+		  Paper<br />
+		  Red Sharpies<br />
+		  <br />
+		  The People:<br />
+		  Zain Memon<br />
+		  Sha Hwang<br />
+		  Jen Phillips<br />
+		  Mike Tahani<br />
+		  Alan Rorie<br />
+		  <br />
+		  Thanks to:<br />
+		  Grey Area Foundation For The Arts<br />
+		  Kicker Studio<br />
+		  Hack and Hackers<br />
+		  Stamen<br />
+		Mother Jones</div></div>
+		<div class="buttonSet">
+			<button id="aboutClose">Close This</button>
+		</div>
+	</div>
+	
+	<div id="sidebar">
+		<div id="info" class="uiBackground">
+			<div id="individualMapType" class="largeText">Mapper Profile</div>
+			<div id="individualMapDesc" class="mediumText">Here is all the addition information we collect about a mapper</div>
+			<br />
+		</div>
+	
+		<div id="saved" class="uiBackground">
+		</div>
+	</div>
+	
+	<div id="header" class="uiBackground">	
+		<div id="masthead">
+			<span class="logoText">TenderMaps</span>
+		</div>
+		
+		<div id="filter">	
+			<div id="sliderFilterContainer" class="filterContainer">
+				<div id="slider" class="filterUI"></div>
+			</div>
+			
+			<div id="mapType" class="filterContainer buttonSet">
+				<input type="radio" id="all" name="mapTypeRadio" checked="checked" /><label id="all" for="all">All</label>
+				<input type="radio" id="streets" name="mapTypeRadio" /><label id="streets" for="streets">Paths</label>
+				<input type="radio" id="places" name="mapTypeRadio" /><label id="places" for="places">Loves</label>
+				<input type="radio" id="community" name="mapTypeRadio" /><label id="community" for="community">Community</label>
+			</div>
+			
+			<div id="personType" class="filterContainer buttonSet">
+				<input type="radio" id="allPeople" name="peopleTypeRadio" checked="checked" /><label id="all" for="allPeople">All</label>
+				<input type="radio" id="worker" name="peopleTypeRadio" /><label id="mapper" for="worker">Worker</label>
+				<input type="radio" id="resident" name="peopleTypeRadio" /><label id="mapper" for="resident">Resident</label>
+				<input type="radio" id="visitor" name="peopleTypeRadio" /><label id="mapper"for="visitor">Visitor</label>
+			</div>
+			
+			<div id="about" class="filterContainer buttonSet">
+				<button>About</button>
+			</div>
+		</div>
+		
+	</div>
+	
+	<div id="hoverLabel">
+		Hover Text
+	</div>
+	
+  <script type="text/javascript">
+
+// page_handler.js
+$(window).resize(updateSize);
+updateSize();
+
+// map.js
+createMap();
+
+// ui.js
+initializeUI();
+
+   </script>
+	
+    <span id="copy">
+      &copy; 2010
+      <a href="http://www.cloudmade.com/">CloudMade</a>,
+      <a href="http://www.openstreetmap.org/">OpenStreetMap</a> contributors,
+      <a href="http://creativecommons.org/licenses/by-sa/2.0/">CCBYSA</a>.
+    </span>
+  </body>
+</html>

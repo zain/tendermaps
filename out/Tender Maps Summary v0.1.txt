@@ -1,0 +1,35 @@
+Summary:
+Tendermaps is an experiment in community cartography encouraging people to define their geography by creating hand-drawn, personalized maps.
+
+Overview:
+We began with the question: Exactly where is the tenderloin?  A simple question with a complex answer.  There are likely as many definitions of what geographic regions constitute the Thenderloin as there are inhabitants within it.  And within these boundaries are numerous micro-communities.  
+
+Additionally, traditional neighborhood boundaries are generated in a top down fashion by government.  As a result the factors that define a neighborhood are political: the need for votes (gerrymandering), the need to delivers services like police, education, and sanitation,;or collect taxes.  Consequently, those seeking to service a neighborhood, not those who are served by it, define it. 
+
+Maps are powerful tools for shaping how we understand our shared space. Traditionally the ability to make maps and define what is mapped has been in the hands of a few.  So we began to wonder what would happen if we helped people to build their own maps using factors relevant to lives within the community.
+
+After a bit of brainstorming and code hacking, we hit the streets and encouraged members of the Tenderloin to begin to cartographically define the neighborhood their self by marking up blank street map.  We guided people towards defining the region with three factors: The paths they take through it, the things they love in it, and the location of their communities within it.
+
+Accessibility to the process was key design factor for our team, so we employ a low-tech method for map marking – Sharpie marker and paper.  The generated maps are then scanned, and the hand made mark-ups are extracted, georectified, and superimposed.  
+
+Users can then explore the maps by changing the number of superimposed maps, clicking on a region to display maps that have marked that area, or selecting a map to see other maps made by the same person.
+
+In the spirit of the Urban Hack day we focused on what we could get done, not what we could do.  However, we see potential in project in several directions.  
+
+Exploring community aesthetically
+Harnessing the power of drawing, story telling and journalism to generate conversations about community.
+Getting the real local story – where people really say it’s dangerous and how they say it.
+
+
+
+Tools employed:
+Walking Papers
+Poly Maps
+Java
+Python
+HTML
+Paper
+Red Sharpie
+
+
+

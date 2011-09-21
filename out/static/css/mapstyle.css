@@ -1,0 +1,44 @@
+svg { display: block; }
+
+.layer circle:hover, .layer circle.selected {
+	fill: #416704;
+	fill-opacity: 1;
+	cursor: pointer;
+	stroke: #000000;
+	stroke-width: 3px;
+}
+
+.layer circle {
+	fill: #416704; 
+	fill-opacity: 0.75; 
+	stroke: #333;
+}
+
+.transparency {
+	opacity: .2;
+}
+
+#hoverLabel { 
+	height: 25px; 
+	padding: 5px;
+	padding-top: 10px; 
+	padding-left: 10px;
+	padding-right: 10px;
+	position: absolute;
+	color: #999; 
+	background: #eee; 
+	border: 2px solid #999;
+	border-radius: 15px;
+	-moz-border-radius: 15px; 
+	display: none;
+}
+
+#copy { 
+	color: #333;
+	margin-left: 300px;
+	padding-left: 5px;
+}
+
+#copy a {
+	color: #333;
+}
