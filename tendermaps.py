@@ -4,7 +4,7 @@ import json, os
 
 DEBUG = True # prints some extra stuff on each run
 IN_FOLDER = os.path.abspath('in/') # location of the scanned images and their descriptions
-OUT_FOLDER = os.path.abspath('html/scans/') # location where the processed scans will go
+OUT_FOLDER = os.path.abspath('public_html/scans/') # location where the processed scans will go
 LISTFILE = os.path.join(OUT_FOLDER, 'list.json') # stores info from the last time this was run
 GREY_SENSITIVITY = 20 # how colorful can a pixel be for it to still be considered greyscale?
 ACCEPTABLE_FILETYPES = sorted(['png', 'jpg', 'jpeg', 'tif', 'gif']) # scan filetypes
