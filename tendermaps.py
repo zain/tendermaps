@@ -150,7 +150,7 @@ def load_scan(im, sensitivity, filename, save_to):
                 hot_pixels.append((x,y))
     
     # pick a single color to re-color the drawn part, based on the dominant channel
-    avg = lambda i: i / len(hot_pixels)
+    avg = lambda i: i / len(hot_pixels) if len(hot_pixels) != 0 else i
     r,g,b = (avg(rs), avg(gs), avg(bs))
     if max(r,g,b) == r: color = (222,50,10,255)
     if max(r,g,b) == g: color = (48,150,74,255)
@@ -168,8 +168,6 @@ def load_scan(im, sensitivity, filename, save_to):
     
     out_path = os.path.join(save_to, "%s.png" % filename.split('.')[0])
     im.save(out_path, "PNG")
-    
-    return [(0,0),(0,0)]
 
 
 def store_list(filelist, listfile):
