@@ -6,7 +6,8 @@ DEBUG = True # prints some extra stuff on each run
 IN_FOLDER = os.path.abspath('in/') # location of the scanned images and their descriptions
 OUT_FOLDER = os.path.abspath('public_html/scans/') # location where the processed scans will go
 LISTFILE = os.path.join(OUT_FOLDER, 'list.json') # stores info from the last time this was run
-GREY_SENSITIVITY = 20 # how colorful can a pixel be for it to still be considered greyscale?
+GREY_SENSITIVITY = 20 # how much channel variance to allow before a pixel is considered colored
+WHITE_MIN = 150 # if any channel is greater, the pixel is considered white (outside the border)
 ACCEPTABLE_FILETYPES = sorted(['png', 'jpg', 'jpeg', 'tif', 'gif']) # scan filetypes
 
 
@@ -65,13 +66,68 @@ def difference(filelist1, filelist2):
     return diff
 
 
-def load_scan(path, sensitivity, save_to):
+def crop_to_border(im):
+    width, height = im.size
+    pix = im.load()
+    
+    mid_x = width / 2
+    mid_y = height / 2
+    
+    is_white = lambda r, g, b, a: r > WHITE_MIN or g > WHITE_MIN or b > WHITE_MIN
+    
+    x = 0
+    while x < width:
+        p = pix[x, mid_y]
+        if not is_white(*p):
+            while not is_white(*p):
+                x += 1
+                p = pix[x, mid_y]
+            break
+        x += 1
+    
+    y = 0
+    while y < height:
+        p = pix[mid_x, y]
+        if not is_white(*p):
+            while not is_white(*p):
+                y += 1
+                p = pix[mid_x, y]
+            break
+        y += 1
+    
+    left, upper = x, y
+    
+    x = width - 1
+    while x > 0:
+        p = pix[x, mid_y]
+        if not is_white(*p):
+            while not is_white(*p):
+                x -= 1
+                p = pix[x, mid_y]
+            break
+        x -= 1
+    
+    y = height - 1
+    while y > 0:
+        p = pix[mid_x, y]
+        if not is_white(*p):
+            while not is_white(*p):
+                y -= 1
+                p = pix[mid_x, y]
+            break
+        y -= 1
+    
+    right, lower = x, y
+    
+    return im.crop((left, upper, right, lower))
+
+
+def load_scan(im, sensitivity, filename, save_to):
     """
         Modifies the image scan at `path` to turn all greyscale pixels transparent, then crops the
         image to only include the map, and returns the lat/lon bounds of that map. A pixel is
         considered grayscale when all its color channels are within `sensitivity` of each other.
     """
-    im = Image.open(path).convert("RGBA")
     pix = im.load()
     
     width, height = im.size
@@ -110,7 +166,6 @@ def load_scan(path, sensitivity, save_to):
     if not os.path.exists(OUT_FOLDER):
         os.makedirs(OUT_FOLDER)
     
-    filename = os.path.basename(path)
     out_path = os.path.join(save_to, "%s.png" % filename.split('.')[0])
     im.save(out_path, "PNG")
     
@@ -134,10 +189,11 @@ if __name__ == '__main__':
     
     if new_files:
         for filename in new_files:
-            print "> Loading: %s" % filename
-            path = os.path.join(IN_FOLDER, filename)
-            now_files[filename]['bounds'] = load_scan(path, GREY_SENSITIVITY, save_to=OUT_FOLDER)
-            print "Loaded %s with bounds %s" % (filename, now_files[filename]['bounds'])
+            scan = Image.open(os.path.join(IN_FOLDER, filename)).convert("RGBA")
+            print "> Loading %s (%sx%s)." % (filename, scan.size[0], scan.size[1])
+            scan = crop_to_border(scan)
+            load_scan(scan, GREY_SENSITIVITY, filename, save_to=OUT_FOLDER)
+            print "Loaded %s (%sx%s)." % (filename, scan.size[0], scan.size[1])
         store_list(now_files, LISTFILE)
         if DEBUG: print "All done. Bye!\n"
     else:
